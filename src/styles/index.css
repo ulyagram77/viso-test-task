@@ -1,0 +1,8 @@
+/* there will be global app styles as reset, fonts, variables etc... */
+@import 'normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,500&display=swap');
+
+* {
+    font-family: 'Roboto', system-ui, sans-serif;
+    scroll-behavior: smooth;
+}
