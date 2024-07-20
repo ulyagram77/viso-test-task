@@ -1,56 +1,47 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import { IMarkerData } from 'src/core/interfaces';
-import { mapIcon, clusterIcon } from 'src/assets';
+
+import { clusterIcon } from 'src/assets';
+import { nanoid } from 'nanoid';
 import 'leaflet/dist/leaflet.css';
 
-const markers: IMarkerData[] = [
-    {
-        id: '1',
-        geocode: [49.9945, 36.2312],
-        popUp: 'Маркер 1',
-    },
-    {
-        id: '2',
-        geocode: [50.0048, 36.2335],
-        popUp: 'Маркер 2',
-    },
-    {
-        id: '3',
-        geocode: [49.9981, 36.2411],
-        popUp: 'Маркер 3',
-    },
-    {
-        id: '4',
-        geocode: [50.0141, 36.2432],
-        popUp: 'Маркер 4',
-    },
-    {
-        id: '5',
-        geocode: [49.9898, 36.2277],
-        popUp: 'Маркер 5',
-    },
-    {
-        id: '6',
-        geocode: [49.9934, 36.2317],
-        popUp: 'Маркер 6',
-    },
-];
+import useMarkerStore from 'src/core/store';
+import DraggableMarker from './DraggableMarker';
+import { IMarker } from 'src/core/interfaces';
+
+const AddMarkerOnClick = () => {
+    const addMarker = useMarkerStore(state => state.addMarker);
+
+    useMapEvents({
+        click(e) {
+            const newMarker: IMarker = {
+                id: nanoid(),
+                geocode: [e.latlng.lat, e.latlng.lng],
+                popUp: 'Новий маркер',
+            };
+            addMarker(newMarker);
+        },
+    });
+    return null;
+};
 
 const Map = () => {
+    const { markers } = useMarkerStore();
+
     return (
-        <MapContainer center={[49.9935, 36.2304]} zoom={13}>
+        <MapContainer
+            center={[49.9935, 36.2304]}
+            zoom={13}
+            style={{ height: '100vh', width: '100%' }}
+        >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <AddMarkerOnClick />
             <MarkerClusterGroup chunkedLoading iconCreateFunction={clusterIcon}>
                 {markers.map(marker => (
-                    <Marker position={marker.geocode} icon={mapIcon} key={marker.id}>
-                        <Popup>
-                            <h2>{marker.popUp}</h2>
-                        </Popup>
-                    </Marker>
+                    <DraggableMarker marker={marker} key={marker.id} />
                 ))}
             </MarkerClusterGroup>
         </MapContainer>
