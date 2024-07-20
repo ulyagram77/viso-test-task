@@ -1,5 +1,7 @@
 # Viso Test Task
 
+Live deploy on versel: https://viso-test-task-map.vercel.app
+
 `Functionality`:
 
 -   user can add new marker by clicking on map space
